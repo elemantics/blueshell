@@ -26,7 +26,7 @@ So let's say you have an object full of methods that you want to use as a protot
 
 var personActions = {
     "sayName" : function () { return this.name },
-    "sayAge"  : function () { returh this.age }
+    "sayAge"  : function () { return this.age }
 };
 
 ```
