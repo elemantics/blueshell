@@ -84,7 +84,7 @@ returns => 94
 
 And here's where it really gets cool.
 
-Blueshell also gives all of your QuantumObjects access to a super-awesome utility for retrieving its prototype.
+Blueshell also gives each of your QuantumObjects access to a super-awesome utility for retrieving its prototype.
 
 ```javascript
 
@@ -99,7 +99,7 @@ Object =>
 
 ```
 
-But if **getPrototype** isn't in the prototype and it isn't one of the object's own properties, where is it??  Hint:  It's NOT in the global Object.prototype either.  It's something I like to call a quantum utility.  Blueshell lets you see those like this:
+But if **getPrototype** isn't in the prototype and it isn't one of the object's own properties, where is it??  Hint:  It's NOT in **Object.prototype** either.  It's something I like to call a quantum utility.  Blueshell lets you see those like this:
 
 ```javascript
 
@@ -114,7 +114,7 @@ Object =>
 
 ```
 
-Using **myObject.getPrototype()** allows you to see prototypes in (possibly) any modern browser, including IE.  So once you have Blueshell installed, you won't want to use **Object.getPrototypeOf** because it will return the quantum utilities instead of the actual prototype object.  If you need a way to a see prototypes more functionally, Blueshell gives you this:
+Using **myObject.getPrototype** allows you to see prototypes in (possibly) any modern browser, including IE.  So once you have Blueshell installed, you won't want to use **Object.getPrototypeOf** because it will return the quantum utilities instead of the actual prototype object.  If you need a way to a see prototypes more functionally, Blueshell gives you this:
 
 ```javascript
 
