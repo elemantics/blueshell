@@ -2,22 +2,24 @@
 Name: blueshell.js
 Author: John Newman
 Date: 11-11-11
-Version: 1.5
+Version: 1.6
 License: MIT
 Description: A JS microlibrary for inheritance.  Geared more toward working with Prototypes. Even works in IE.
 
+Version 1.6 exports better to modules.
+
 Usage:
-contextObject.protoChain(prototypeObj, newObj);
+BS.protoChain(prototypeObj, newObj);
 
 If you want to create an object from a class, do it like this:
-contextObject.classChain(parentObj, childObj);
+BS.classChain(parentObj, childObj);
 
 Every object linked to an object created with protoChain() has access to a method called getPrototype() that 
 returns its prototype. You should use this instead of Object.getPrototypeOf() because GPO is not available 
 in all browsers and will not return the data you want in cases of objects created with protoChain().  Blueshell
 also gives you a standard way to access an object's prototype that will work in most browsers (including IE as
 long as the object was created using protoChain()): 
-contextObject.getPrototype(obj) 
+BS.getPrototype(obj) 
 
 */
 
@@ -25,7 +27,7 @@ contextObject.getPrototype(obj)
 
     'use strict';
 
-    var version = '1.5';
+    var version = '1.6', bs;
 
     // Utility for accessing prototypes
     function accessProto(obj) {
@@ -107,18 +109,36 @@ contextObject.getPrototype(obj)
         return me;
     }
 
-    // Grant access to the current blueshell version
-    context.blueshellVersion = context.blueshellVersion || version;
+    bs = {
 
-    // Grant access to inheritance functions
-    context.getPrototype = context.getPrototype || function (obj) {
-        return accessProto(obj);
+        // Grant access to the current blueshell version
+        "version" : version,
+
+        // Grant access to inheritance functions
+        "getPrototype" : function (obj) {
+            return accessProto(obj);
+        },
+
+        "protoChain" : function (proto, child) {
+            return new Quantum(proto, child);
+        },
+
+        "classChain" : function (parent, child) {
+            return extension(parent, child);
+        }
+
     };
-    context.protoChain = context.protoChain || function (proto, child) {
-        return new Quantum(proto, child);
-    };
-    context.classChain = context.classChain || function (parent, child) {
-        return extension(parent, child);
-    };
+
+    // AMD
+    if (context.define && typeof context.define === 'function' && context.define.amd) {
+        context.define('blueshell', [], bs);
+    // node
+    } else if (context.module && context.module.exports) {
+        context.module.exports = bs;
+    // browser
+    } else {
+        // use string because of Google closure compiler ADVANCED_MODE
+        context['BLUESHELL'] = context['BS'] = bs;
+    }
 
 }(this));

@@ -2,6 +2,8 @@
 
 > There's a reason it's called blueshell.  But that's not really important.
 
+Version 1.6 is now more modular!
+
 Blueshell.js is a powerful inheritance microlibrary for JavaScript.  It's geared mainly toward working with
 prototypal inheritance but allows class-like construction as well.  Prototypes created with Blueshell are
 even accessible in IE 8 (not tested in 7).
@@ -12,13 +14,10 @@ Here's how it works:
 
 ## Installation ##
 
-Blueshell can be installed anywhere and binds itself to the global object by default.  However, you can add it to
-your object of choice by simply modifying the 'this' argument in the last line of the blueshell.js file.
+Blueshell can be installed anywhere and binds a namespace called 'BLUESHELL' to the global object by default.  It
+also gives you 'BS' as a shortcut for this.
 
 ## Creating Prototypes ##
-
-For these examples, we'll assume Blueshell has attached itself to the global object.  Since you might be in the
-browser, Node, or whatever, we'll call that object **global**.
 
 So let's say you have an object full of methods that you want to use as a prototype for other objects.
 
@@ -35,12 +34,12 @@ You can bind objects to **personActions** and use it as a prototype by using Blu
 
 ```javascript
 
-var me = global.protoChain(personActions, {
+var me = BLUESHELL.protoChain(personActions, {
     "name" : "John",
     "age"  : 28
 });
 
-var you = global.protoChain(personActions, {
+var you = BLUESHELL.protoChain(personActions, {
     "name" : "Alex",
     "age"  : 94
 });
@@ -118,7 +117,7 @@ Using **myObject.getPrototype** allows you to see prototypes in (possibly) any m
 
 ```javascript
 
-global.getPrototype(me);
+BLUESHELL.getPrototype(me);
 /*
 Object =>
 {
@@ -150,7 +149,7 @@ Now we want to build an instance of **person**.
 
 ```javascript
 
-var kid = global.classChain(person);
+var kid = BLUESHELL.classChain(person);
 /*
 QuantumObject =>
 {
@@ -172,7 +171,7 @@ You can also merge two parents together to create a child object - a process als
 
 ```javascript
 
-var kid = global.classChain(person, {
+var kid = BLUESHELL.classChain(person, {
     "name"   : "Sally",
     "gender" : "female",
     "isBald" : false
