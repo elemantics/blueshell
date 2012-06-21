@@ -30,7 +30,7 @@ var personActions = {
 
 ```
 
-You can bind objects to **personActions** and use it as a prototype by using Blueshell's **protoChain** function:
+You can bind objects to `personActions` and use it as a prototype by using Blueshell's `protoChain` function:
 
 ```javascript
 
@@ -46,10 +46,10 @@ var you = BLUESHELL.protoChain(personActions, {
 
 ```
 
-Note:  Blueshell does NOT let you bind a prototype to an object that already exists.  **protoChain** returns a new object in every case.  It would be a very bad idea to attach and detach prototypes to objects willy nilly throughout the course of their lives.
+Note:  Blueshell does NOT let you bind a prototype to an object that already exists.  `protoChain` returns a new object in every case.  It would be a very bad idea to attach and detach prototypes to objects willy nilly throughout the course of their lives.
 
 Anyway, if you log either of these new objects to the console, you'll see that Blueshell has generated something
-called a **QuantumObject**.  It's called this because there are some really cool quantum physics taking place here :)
+called a `QuantumObject`.  It's called this because there are some really cool quantum physics taking place here :)
 
 ```javascript
 
@@ -64,8 +64,8 @@ QuantumObject =>
 
 ```
 
-As we would expect, the **me** object only owns the properties we put into it.  However, because it is bound to
-**personActions**, it can use them:
+As we would expect, the `me` object only owns the properties we put into it.  However, because it is bound to
+`personActions`, it can use them:
 
 ```javascript
 
@@ -98,7 +98,7 @@ Object =>
 
 ```
 
-But if **getPrototype** isn't in the prototype and it isn't one of the object's own properties, where is it??  Hint:  It's NOT in **Object.prototype** either.  It's something I like to call a quantum utility.  Blueshell lets you see those like this:
+But if `getPrototype` isn't in the prototype and it isn't one of the object's own properties, where is it??  Hint:  It's NOT in `Object.prototype` either.  It's something I like to call a quantum utility.  Blueshell lets you see those like this:
 
 ```javascript
 
@@ -113,7 +113,7 @@ Object =>
 
 ```
 
-Using **myObject.getPrototype** allows you to see prototypes in (possibly) any modern browser, including IE.  So once you have Blueshell installed, you won't want to use **Object.getPrototypeOf** because it will return the quantum utilities instead of the actual prototype object.  If you need a way to a see prototypes more functionally, Blueshell gives you this:
+Using `myObject.getPrototype` allows you to see prototypes in (possibly) any modern browser, including IE.  So once you have Blueshell installed, you won't want to use `Object.getPrototypeOf` because it will return the quantum utilities instead of the actual prototype object.  If you need a way to a see prototypes more functionally, Blueshell gives you this:
 
 ```javascript
 
@@ -145,7 +145,7 @@ var person = {
 
 ```
 
-Now we want to build an instance of **person**.
+Now we want to build an instance of `person`.
 
 ```javascript
 
@@ -161,8 +161,8 @@ QuantumObject =>
 
 ```
 
-Notice that **kid** is a QuantumObject.  This means it has access to the same quantum utilities that you would
-get if you were creating a prototypal chain.  It also means you can use **getPrototype** to get its prototype.
+Notice that `kid` is a QuantumObject.  This means it has access to the same quantum utilities that you would
+get if you were creating a prototypal chain.  It also means you can use `getPrototype` to get its prototype.
 
 Blueshell's class system takes prototypes into account.  If your parent object is bound to a prototype, your child
 object will be bound to the same prototype.
