@@ -59,7 +59,7 @@ create all of your objects with `B.hatch`.
 ### Classical Inheritance ###
 
 If you want to create a new object that classically inherits properties from another object, you can use 
-`B.hatch` for this as well.  In this use case, you have option of passing in up to three arguments.
+`B.hatch` for this as well.  In this use case, you have the option of passing in up to three arguments.
 
 ```javascript
 var person = B.hatch({
