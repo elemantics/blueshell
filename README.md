@@ -1,191 +1,247 @@
 # Blueshell.js #
 
-> There's a reason it's called blueshell.  But that's not really important.
+> A simple, clean, straightforward and powerful inheritance engine for all JS environments.
 
-Version 1.6 is now more modular!
+Version 2.0 contains:
+- No more BS joke :)
+- "Infinitely" chainable prototypes that are super easy to make
+- A simpler, smarter, stricter interface
+- Prototypes accessible in EVERY JS environment including IE
 
-Blueshell.js is a powerful inheritance microlibrary for JavaScript.  It's geared mainly toward working with
-prototypal inheritance but allows class-like construction as well.  Prototypes created with Blueshell are
-even accessible in IE 8 (not tested in 7).
+Blueshell.js is a powerful inheritance microlibrary for JavaScript.  It's equally suited to dealing with
+classical inheritance and prototypal inheritance alike.  Prototypes created with BlueShell are
+even accessible in IE 8 (not tested in 7) and, of course, it passes JSLint.
 
-Note: Blueshell syntax is not like Java syntax.  It's much more in line with modern JS than traditional OO style.
+**Note: BlueShell syntax is not like Java syntax. You won't need any `new` anything.**
 
 Here's how it works:
 
 ## Installation ##
 
-Blueshell can be installed anywhere and binds a namespace called 'BLUESHELL' to the global object by default.  It
-also gives you 'BS' as a shortcut for this.
+BlueShell can be installed anywhere and binds a namespace called `BlueShell` or `B` to the global object
+by default.  In the browser, just include the JS file.  Anywhere else, just do what you'd normally do.
 
-## Creating Prototypes ##
+## Usage ##
 
-So let's say you have an object full of methods that you want to use as a prototype for other objects.
+First and foremost, any objects you intend to touch directly or indirectly with BlueShell need to
+be created using BlueShell.  If you ignore this rule, you won't get seamless, retrievable prototypes.
+
+To create an object, use `BlueShell.hatch`.  Remember that `B` can be used as a shortcut for "BlueShell".
 
 ```javascript
-
-var personActions = {
-    "sayName" : function () { return this.name },
-    "sayAge"  : function () { return this.age }
-};
-
+var person = B.hatch({
+    name: 'john',
+    age: 28
+});
 ```
 
-You can bind objects to `personActions` and use it as a prototype by using Blueshell's `protoChain` function:
+Doing this engages the background work that makes retrieving prototypes possible.  Your result is an
+instance of `B.ClassChain` and looks something like this:
 
 ```javascript
+// B.ClassChain =>
+{
+    name: 'john',
+    age: 28,
+    __proto__: Object {
+        isClassChain: true,
+        getProto: [FUNCTION],
+        protoRef: 'B-1342644884033-1000001-bbbXbQ2x9K56V7wcLBB29NBdm'
+    }
+}
+```
 
-var me = BLUESHELL.protoChain(personActions, {
-    "name" : "John",
-    "age"  : 28
+Notice that `B.hatch` will give your object a universally unique prototypal `protoRef` property.  This
+reference is necessary for BlueShell's advanced prototypal inheritance and is the reason you need to
+create all of your objects with `B.hatch`.
+
+### Classical Inheritance ###
+
+If you want to create a new object that classically inherits properties from another object, you can use 
+`B.hatch` for this as well.  In this use case, you have option of passing in up to three arguments.
+
+```javascript
+var person = B.hatch({
+    name: 'john',
+    age: 28
 });
 
-var you = BLUESHELL.protoChain(personActions, {
-    "name" : "Alex",
-    "age"  : 94
+var kid = B.hatch(person, B.hatch({
+    age: 42,
+    hair: 'brown'
+}));
+
+kid;
+// B.ClassChain =>
+{
+    name: 'john',
+    age: 42,
+    hair: 'brown',
+    __proto__: Object {
+        isClassChain: true,
+        getProto: [FUNCTION],
+        protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+    }
+}
+```
+
+When using `.hatch` in this way, your first argument constitutes the object to be used as a parent
+and the second argument constitutes an object full of mixins and overrides.
+
+If it so happens that your parent object has been attached to a prototype via BlueShell, your new child
+object will be bound to the same prototype unless you explicitly tell BlueShell not to do this.  You can
+state this explicitly by passing in the value `false` as a third argument to `.hatch`.
+
+### Prototypal Inheritance ###
+
+Binding objects to prototypes with BlueShell is much easier than in native JavaScript.  Let's say you
+have an object you want to use as a prototype:
+
+```javascript
+var personActions = B.hatch({
+    getName: function () { return this.name; },
+    getAge: function () { return this.age; }
 });
-
 ```
 
-Note:  Blueshell does NOT let you bind a prototype to an object that already exists.  `protoChain` returns a new object in every case.  It would be a very bad idea to attach and detach prototypes to objects willy nilly throughout the course of their lives.
-
-Anyway, if you log either of these new objects to the console, you'll see that Blueshell has generated something
-called a `QuantumObject`.  It's called this because there are some really cool quantum physics taking place here :)
+You can create a new object using `personActions` as its prototype with the method `BlueShell.bindProto`:
 
 ```javascript
+var person = B.bindProto(personActions, B.hatch({
+    name: 'john',
+    age: 28
+}));
 
-console.log(me);
-/*
-QuantumObject =>
+person.getName();
+// => 'john'
+
+person.getAge();
+// => 28
+
+person;
+// B.ClassChain =>
 {
-    "name" : "John",
-    "age"  : 28
+    name: 'john',
+    age: 28,
+
+    __proto__: B.ChainLink {
+        protoRef: 'B-1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
+
+        __proto__: B.ClassChain {
+            getName: function () { return this.name; },
+            getAge: function () { return this.age; },
+
+            __proto__: Object {
+                getProto: [FUNCTION],
+                protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+            }
+        }
+    }
 }
-*/
-
 ```
 
-As we would expect, the `me` object only owns the properties we put into it.  However, because it is bound to
-`personActions`, it can use them:
+Once you have created an object with an attached prototype, you can actually use your new object as the
+prototype for another object.  Feel free to nest your prototypes as deep as you like.
 
 ```javascript
+var child = B.bindProto(person, B.hatch({
+    hair: 'brown';
+}));
 
-me.sayName();
-/*
-returns => "John"
-*/
-
-you.sayAge();
-/*
-returns => 94
-*/
-
-```
-
-And here's where it really gets cool.
-
-Blueshell also gives each of your QuantumObjects access to a super-awesome utility for retrieving its prototype.
-
-```javascript
-
-me.getPrototype();
-/*
-Object =>
+child;
+// B.ClassChain =>
 {
-    "sayName" : [Function],
-    "sayAge"  : [Function]
-}
-*/
+    hair: 'brown',
 
+    __proto__: B.ChainLink {
+        protoRef: 'B-1342706790790-1000003-7NBHANoQGn5MNELQ4yb5pkWMb',
+
+        __proto__: B.ClassChain {
+            name: 'john',
+            age: 28,
+
+            __proto__: B.ChainLink {
+                protoRef: 'B-1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
+
+                __proto__: B.ClassChain {
+                    getName: function () { return this.name; },
+                    getAge: function () { return this.age; },
+
+                    __proto__: Object {
+                        getProto: [FUNCTION],
+                        protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+                    }
+                }
+            }
+        }
+    }
+}
 ```
 
-But if `getPrototype` isn't in the prototype and it isn't one of the object's own properties, where is it??  Hint:  It's NOT in `Object.prototype` either.  It's something I like to call a quantum utility.  Blueshell lets you see those like this:
+Then, of course, if you modify a prototype, the change propagates to the children:
 
 ```javascript
+personActions.getHair = function () { return this.hair; };
 
-me.getQuantumUtils();
-/*
-Object =>
+child;
+// B.ClassChain =>
 {
-    "getPrototype" : [Function],
-    "getQuantumUtils" : [Function]
-}
-*/
+    hair: 'brown',
 
+    __proto__: B.ChainLink {
+        protoRef: 'B-1342706790790-1000003-7NBHANoQGn5MNELQ4yb5pkWMb',
+
+        __proto__: B.ClassChain {
+            name: 'john',
+            age: 28,
+
+            __proto__: B.ChainLink {
+                protoRef: 'B-1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
+
+                __proto__: B.ClassChain {
+                    getName: function () { return this.name; },
+                    getAge: function () { return this.age; },
+                    getHair: function () { return this.hair; },
+
+                    __proto__: Object {
+                        getProto: [FUNCTION],
+                        protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+                    }
+                }
+            }
+        }
+    }
+}
+
+child.getHair();
+// => 'brown'
 ```
 
-Using `myObject.getPrototype` allows you to see prototypes in (possibly) any modern browser, including IE.  So once you have Blueshell installed, you won't want to use `Object.getPrototypeOf` because it will return the quantum utilities instead of the actual prototype object.  If you need a way to a see prototypes more functionally, Blueshell gives you this:
+The instances of `B.ChainLink` are part of what makes the prototypes cross-environment compatible.
+In practice, you can pretend they don't even exist.  When you want to retrieve an object's prototype,
+just invoke `someObject.getProto()` and it will return the most immediate prototype attached to an object
+disregarding the chain links.
 
 ```javascript
-
-BLUESHELL.getPrototype(me);
-/*
-Object =>
+child.getProto();
+// B.ClassChain =>
 {
-    "sayName" : [Function],
-    "sayAge"  : [Function]
-}
-*/
+    name: 'john',
+    age: 28,
 
+    __proto__: B.ChainLink {
+        protoRef: 'B-1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
+
+        __proto__: B.ClassChain {
+            getName: function () { return this.name; },
+            getAge: function () { return this.age; },
+            getHair: function () { return this.hair; },
+
+            __proto__: Object {
+                getProto: [FUNCTION],
+                protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+            }
+        }
+    }
+|
 ```
-
-## Creating Classes ##
-
-You never need to use the word **new** when working with Blueshell inheritance.  All that is handled under the hood
-for you.  Working with Blueshell classes feels much more like modern JS than traditional Java.
-
-So let's say you've got a general person object:
-
-```javascript
-
-var person = {
-    "eyes"   : 2,
-    "gender" : "male",
-    "isBald" : true
-};
-
-```
-
-Now we want to build an instance of `person`.
-
-```javascript
-
-var kid = BLUESHELL.classChain(person);
-/*
-QuantumObject =>
-{
-    "eyes"   : 2,
-    "gender" : "male",
-    "isBald" : true
-}
-*/
-
-```
-
-Notice that `kid` is a QuantumObject.  This means it has access to the same quantum utilities that you would
-get if you were creating a prototypal chain.  It also means you can use `getPrototype` to get its prototype.
-
-Blueshell's class system takes prototypes into account.  If your parent object is bound to a prototype, your child
-object will be bound to the same prototype.
-
-You can also merge two parents together to create a child object - a process also known as including "mixins".
-
-```javascript
-
-var kid = BLUESHELL.classChain(person, {
-    "name"   : "Sally",
-    "gender" : "female",
-    "isBald" : false
-});
-/*
-QuantumObject =>
-{
-    "eyes"   : 2,
-    "gender" : "female",
-    "isBald" : false,
-    "name"   : "Sally"
-}
-*/
-
-```
-
-Notice that when you include mixins, the mixins will override any of the same properties in the initial parent.
