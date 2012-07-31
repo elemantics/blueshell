@@ -107,10 +107,10 @@ prototype:
         // However, if the parent's prototype is Object, we'll lose all our cool methods so
         // in that case we want to defer to the else case as well.
         if (parent.getProto
-            && parent.getProto() !== Object.prototype
-            && parent.isClassChain
-            && !Object.prototype.hasOwnProperty.call(parent, 'isClassChain')
-            && copyProto !== false) {
+                && parent.getProto() !== Object.prototype
+                && parent.isClassChain
+                && !Object.prototype.hasOwnProperty.call(parent, 'isClassChain')
+                && copyProto !== false) {
 
             // In order to make prototypes retrievable, we have to override the protoRef
             // property.  We do that by adding an object between the prototype and the child
@@ -133,21 +133,21 @@ prototype:
             B.ClassChain.prototype = middleBinding;
             return new B.ClassChain(parent, child);
 
-        // In the case that we do not want the child to inherit the parent's prototype...
-        } else {
-
-            // We generate the default prototype object, attach it to the constructor,
-            // and build the new object.
-            B.ClassChain.prototype = {
-                "isClassChain" : true,
-                "protoRef"     : newId,
-                "getProto"     : function () {
-                    var proto = protoRefs[this.protoRef];
-                    return (!proto) ? Object.prototype : proto;
-                }
-            };
-            return new B.ClassChain(parent, child);
         }
+        // In the case that we do not want the child to inherit the parent's prototype...
+
+        // We generate the default prototype object, attach it to the constructor,
+        // and build the new object.
+        B.ClassChain.prototype = {
+            "isClassChain" : true,
+            "protoRef"     : newId,
+            "getProto"     : function () {
+                var proto = protoRefs[this.protoRef];
+                return (!proto) ? Object.prototype : proto;
+            }
+        };
+        return new B.ClassChain(parent, child);
+
     }
 
     // The constructor for prototypal inheritance
@@ -186,16 +186,15 @@ prototype:
             B.ClassChain.prototype = middleBinding;
             return new B.ClassChain(child);
 
-        // If there is currently no prototype chain, begin one using proto as the original prototype.
-        } else {
-
-            // Create a reference to the prototype to make it retrievable.
-            protoRefs[child.protoRef] = proto;
-
-            // Attach the prototype to the constructor and build the object.
-            B.ClassChain.prototype = proto;
-            return new B.ClassChain(child);
         }
+        // If there is currently no prototype chain, begin one using proto as the original prototype.
+
+        // Create a reference to the prototype to make it retrievable.
+        protoRefs[child.protoRef] = proto;
+
+        // Attach the prototype to the constructor and build the object.
+        B.ClassChain.prototype = proto;
+        return new B.ClassChain(child);
     }
 
     // Populate exports.

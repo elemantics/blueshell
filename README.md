@@ -10,8 +10,7 @@ Version 2.0 contains:
 
 Blueshell.js is a powerful inheritance microlibrary for JavaScript.  It's equally suited to dealing with
 classical inheritance and prototypal inheritance alike.  Prototypes created with BlueShell are
-even accessible in IE 8 (not tested in 7) and, of course, it passes JSLint (with two deliberate exceptions
-that aren't evil).
+even accessible in IE 8 (not tested in 7) and, of course, it passes JSLint.
 
 **Note: BlueShell syntax is not like Java syntax. You won't need any `new` anything.**
 
