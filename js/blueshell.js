@@ -104,7 +104,13 @@ prototype:
 
         // If the parent was created with blueshell we want the child to inherit the parent's
         // prototype unless the user tells us not to.
-        if (parent.isClassChain && !Object.prototype.hasOwnProperty.call(parent, 'isClassChain') && copyProto !== false) {
+        // However, if the parent's prototype is Object, we'll lose all our cool methods so
+        // in that case we want to defer to the else case as well.
+        if (parent.getProto
+            && parent.getProto() !== Object.prototype
+            && parent.isClassChain
+            && !Object.prototype.hasOwnProperty.call(parent, 'isClassChain')
+            && copyProto !== false) {
 
             // In order to make prototypes retrievable, we have to override the protoRef
             // property.  We do that by adding an object between the prototype and the child
