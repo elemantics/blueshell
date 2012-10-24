@@ -29,53 +29,53 @@ by default.  In the browser, just include the JS file.  Anywhere else, just do w
 First and foremost, any objects you intend to touch directly or indirectly with BlueShell need to
 be created using BlueShell.  If you ignore this rule, you won't get seamless, retrievable prototypes.
 
-To create an object, use `BlueShell.hatch`.  Remember that `B` can be used as a shortcut for "BlueShell".
+To create an object, use `BlueShell.create`.  Remember that `B` can be used as a shortcut for "BlueShell".
 
 ```javascript
-var person = B.hatch({
+var person = B.create({
     name: 'john',
     age: 28
 });
 ```
 
 Doing this engages the background work that makes retrieving prototypes possible.  Your result is an
-instance of `B.ClassChain` and looks something like this:
+instance of `Inherit.ClassChain` and looks something like this:
 
 ```javascript
-// B.ClassChain =>
+// Inherit.ClassChain =>
 {
     name: 'john',
     age: 28,
     __proto__: Object {
         isClassChain: true,
         getProto: [FUNCTION],
-        protoRef: 'B-1342644884033-1000001-bbbXbQ2x9K56V7wcLBB29NBdm'
+        protoRef: '1342644884033-1000001-bbbXbQ2x9K56V7wcLBB29NBdm'
     }
 }
 ```
 
-Notice that `B.hatch` will give your object a universally unique prototypal `protoRef` property.  This
+Notice that `B.create` will give your object a universally unique prototypal `protoRef` property.  This
 reference is necessary for BlueShell's advanced prototypal inheritance and is the reason you need to
-create all of your objects with `B.hatch`.
+create all of your objects with `B.create`.
 
 ### Classical Inheritance ###
 
 If you want to create a new object that classically inherits properties from another object, you can use 
-`B.hatch` for this as well.  In this use case, you have the option of passing in up to three arguments.
+`B.create` for this as well.  In this use case, you have the option of passing in up to three arguments.
 
 ```javascript
-var person = B.hatch({
+var person = B.create({
     name: 'john',
     age: 28
 });
 
-var kid = B.hatch(person, B.hatch({
+var kid = B.create(person, B.create({
     age: 42,
     hair: 'brown'
 }));
 
 kid;
-// B.ClassChain =>
+// Inherit.ClassChain =>
 {
     name: 'john',
     age: 42,
@@ -83,17 +83,17 @@ kid;
     __proto__: Object {
         isClassChain: true,
         getProto: [FUNCTION],
-        protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+        protoRef: '1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
     }
 }
 ```
 
-When using `.hatch` in this way, your first argument constitutes the object to be used as a parent
+When using `.create` in this way, your first argument constitutes the object to be used as a parent
 and the second argument constitutes an object full of mixins and overrides.
 
 If it so happens that your parent object has been attached to a prototype via BlueShell, your new child
 object will be bound to the same prototype unless you explicitly tell BlueShell not to do this.  You can
-state this explicitly by passing in the value `false` as a third argument to `.hatch`.
+state this explicitly by passing in the value `false` as a third argument to `.create`.
 
 ### Prototypal Inheritance ###
 
@@ -101,7 +101,7 @@ Binding objects to prototypes with BlueShell is much easier than in native JavaS
 have an object you want to use as a prototype:
 
 ```javascript
-var personActions = B.hatch({
+var personActions = B.create({
     getName: function () { return this.name; },
     getAge: function () { return this.age; }
 });
@@ -110,7 +110,7 @@ var personActions = B.hatch({
 You can create a new object using `personActions` as its prototype with the method `BlueShell.bindProto`:
 
 ```javascript
-var person = B.bindProto(personActions, B.hatch({
+var person = B.bindProto(personActions, B.create({
     name: 'john',
     age: 28
 }));
@@ -122,21 +122,21 @@ person.getAge();
 // => 28
 
 person;
-// B.ClassChain =>
+// Inherit.ClassChain =>
 {
     name: 'john',
     age: 28,
 
-    __proto__: B.ChainLink {
-        protoRef: 'B-1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
+    __proto__: Inherit.ChainLink {
+        protoRef: '1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
 
-        __proto__: B.ClassChain {
+        __proto__: Inherit.ClassChain {
             getName: function () { return this.name; },
             getAge: function () { return this.age; },
 
             __proto__: Object {
                 getProto: [FUNCTION],
-                protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+                protoRef: '1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
             }
         }
     }
@@ -147,32 +147,32 @@ Once you have created an object with an attached prototype, you can actually use
 prototype for another object.  Feel free to nest your prototypes as deep as you like.
 
 ```javascript
-var child = B.bindProto(person, B.hatch({
+var child = B.bindProto(person, B.create({
     hair: 'brown';
 }));
 
 child;
-// B.ClassChain =>
+// Inherit.ClassChain =>
 {
     hair: 'brown',
 
-    __proto__: B.ChainLink {
-        protoRef: 'B-1342706790790-1000003-7NBHANoQGn5MNELQ4yb5pkWMb',
+    __proto__: Inherit.ChainLink {
+        protoRef: '1342706790790-1000003-7NBHANoQGn5MNELQ4yb5pkWMb',
 
-        __proto__: B.ClassChain {
+        __proto__: Inherit.ClassChain {
             name: 'john',
             age: 28,
 
-            __proto__: B.ChainLink {
-                protoRef: 'B-1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
+            __proto__: Inherit.ChainLink {
+                protoRef: '1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
 
-                __proto__: B.ClassChain {
+                __proto__: Inherit.ClassChain {
                     getName: function () { return this.name; },
                     getAge: function () { return this.age; },
 
                     __proto__: Object {
                         getProto: [FUNCTION],
-                        protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+                        protoRef: '1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
                     }
                 }
             }
@@ -187,28 +187,28 @@ Then, of course, if you modify a prototype, the change propagates to the childre
 personActions.getHair = function () { return this.hair; };
 
 child;
-// B.ClassChain =>
+// Inherit.ClassChain =>
 {
     hair: 'brown',
 
-    __proto__: B.ChainLink {
-        protoRef: 'B-1342706790790-1000003-7NBHANoQGn5MNELQ4yb5pkWMb',
+    __proto__: Inherit.ChainLink {
+        protoRef: '1342706790790-1000003-7NBHANoQGn5MNELQ4yb5pkWMb',
 
-        __proto__: B.ClassChain {
+        __proto__: Inherit.ClassChain {
             name: 'john',
             age: 28,
 
-            __proto__: B.ChainLink {
-                protoRef: 'B-1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
+            __proto__: Inherit.ChainLink {
+                protoRef: '1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
 
-                __proto__: B.ClassChain {
+                __proto__: Inherit.ClassChain {
                     getName: function () { return this.name; },
                     getAge: function () { return this.age; },
                     getHair: function () { return this.hair; },
 
                     __proto__: Object {
                         getProto: [FUNCTION],
-                        protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+                        protoRef: '1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
                     }
                 }
             }
@@ -220,31 +220,31 @@ child.getHair();
 // => 'brown'
 ```
 
-The instances of `B.ChainLink` are part of what makes the prototypes cross-environment compatible.
+The instances of `Inherit.ChainLink` are part of what makes the prototypes cross-environment compatible.
 In practice, you can pretend they don't even exist.  When you want to retrieve an object's prototype,
 just invoke `someObject.getProto()` and it will return the most immediate prototype attached to an object
 disregarding the chain links.
 
 ```javascript
 child.getProto();
-// B.ClassChain =>
+// Inherit.ClassChain =>
 {
     name: 'john',
     age: 28,
 
-    __proto__: B.ChainLink {
-        protoRef: 'B-1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
+    __proto__: Inherit.ChainLink {
+        protoRef: '1342706794368-1000008-1WZVGxUT3dSxdrS6wlYgFOCcD',
 
-        __proto__: B.ClassChain {
+        __proto__: Inherit.ClassChain {
             getName: function () { return this.name; },
             getAge: function () { return this.age; },
             getHair: function () { return this.hair; },
 
             __proto__: Object {
                 getProto: [FUNCTION],
-                protoRef: 'B-1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
+                protoRef: '1342645295780-1000004-MYpaly2PKxpPPzM6sWN0hUJ96'
             }
         }
     }
-|
+}
 ```
